@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard } from 'lucide-react';
+import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause } from 'lucide-react';
 import { Dream, ViewState, User } from './types';
 import InfiniteMenu from './components/InfiniteMenu';
 import PixelCard from './components/PixelCard';
@@ -517,17 +517,17 @@ export default function App() {
       // 3. Main Hall (Dashboard)
       return (
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 animate-zoom-in relative flex flex-col">
-               {/* Header Section using FuzzyText for title */}
-              <div className="mb-12 relative z-10 text-center py-12 border-b border-white/5">
-                   <h2 className="text-[10px] font-mono text-white/40 tracking-[0.4em] uppercase mb-4">潜意识博物馆</h2>
-                   <div className="h-16 flex items-center justify-center mb-4">
-                     <FuzzyText fontSize="clamp(1.5rem, 5vw, 2.5rem)" fontWeight={300} color="#fff" baseIntensity={0.1}>
+               {/* Header Section using FuzzyText for title - Adjusted for tighter spacing */}
+              <div className="mb-6 relative z-10 text-center py-6 border-b border-white/5">
+                   <h2 className="text-[9px] font-mono text-white/30 tracking-[0.4em] uppercase mb-0">潜意识博物馆</h2>
+                   <div className="h-10 flex items-center justify-center mb-1">
+                     <FuzzyText fontSize="clamp(1.25rem, 4vw, 2.25rem)" fontWeight={300} color="#fff" baseIntensity={0.1}>
                         潜意识博物馆
                      </FuzzyText>
                    </div>
-                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 mt-2 bg-white/5">
-                       <Fingerprint size={10} className="text-white/40" />
-                       <span className="text-[10px] font-mono tracking-widest text-white/60">{totalCollected} / 365 梦境样本</span>
+                   <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded-full border border-white/10 mt-1 bg-white/5">
+                       <Fingerprint size={9} className="text-white/40" />
+                       <span className="text-[9px] font-mono tracking-widest text-white/60">{totalCollected} / 365 梦境样本</span>
                    </div>
               </div>
 
@@ -842,6 +842,18 @@ export default function App() {
                             )}
                          </>
                     )}
+                    
+                    {/* Centered Play/Pause Button Overlay - Added to recover missing button */}
+                    <div className={`absolute inset-0 flex items-center justify-center z-30 transition-opacity duration-300 ${isPlaying ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
+                         <div className="w-14 h-14 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-black/50 transition-colors">
+                            {isPlaying ? (
+                                <Pause size={20} className="text-white fill-white" />
+                            ) : (
+                                <Play size={20} className="text-white fill-white ml-1" />
+                            )}
+                         </div>
+                    </div>
+
                     {selectedDream.videoStatus === 'processing' && (
                          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center space-y-4">
                              <Loader2 className="w-8 h-8 text-white/50 animate-spin" strokeWidth={1} />
