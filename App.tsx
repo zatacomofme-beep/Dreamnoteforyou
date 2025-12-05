@@ -519,7 +519,7 @@ export default function App() {
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 animate-zoom-in relative flex flex-col">
                {/* Header Section using FuzzyText for title - Adjusted for tighter spacing */}
               <div className="mb-6 relative z-10 text-center py-6 border-b border-white/5">
-                   <h2 className="text-[9px] font-mono text-white/30 tracking-[0.4em] uppercase mb-0">潜意识博物馆</h2>
+                   <h2 className="text-[9px] font-mono text-white/30 tracking-[0.4em] uppercase mb-0">SUBCONSCIOUS MUSEUM</h2>
                    <div className="h-10 flex items-center justify-center mb-1">
                      <FuzzyText fontSize="clamp(1.25rem, 4vw, 2.25rem)" fontWeight={300} color="#fff" baseIntensity={0.1}>
                         潜意识博物馆
