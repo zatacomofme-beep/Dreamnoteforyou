@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, ChevronRight, PawPrint, Mountain, Brain, Clapperboard, Fingerprint, Activity, Wind, Eye, Radio, Zap } from 'lucide-react';
+import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard } from 'lucide-react';
 import { Dream, ViewState, User } from './types';
 import InfiniteMenu from './components/InfiniteMenu';
 import PixelCard from './components/PixelCard';
@@ -19,7 +19,7 @@ const CODEX_CATEGORIES = {
 const INITIAL_DREAMS: Dream[] = [];
 const DEFAULT_USER: User = {
   id: 'user_01',
-  name: 'Dreamer',
+  name: '造梦者',
   isPro: false
 };
 
@@ -70,6 +70,7 @@ export default function App() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [processingStage, setProcessingStage] = useState<'idle' | 'analyzing' | 'painting'>('idle');
 
@@ -123,6 +124,7 @@ export default function App() {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       mediaRecorderRef.current = new MediaRecorder(stream);
       chunksRef.current = [];
       mediaRecorderRef.current.ondataavailable = (e) => {
@@ -142,7 +144,10 @@ export default function App() {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
     }
   };
 
@@ -368,28 +373,28 @@ export default function App() {
                 onClick={() => {setView('PROFILE'); setIsMenuOpen(false);}}
                 className="group flex items-center justify-between p-4 border border-white/10 hover:border-white/30 hover:bg-white/5 rounded-none transition-all"
             >
-                <span className="text-sm font-light tracking-[0.2em] group-hover:pl-2 transition-all">PROFILE</span>
+                <span className="text-sm font-light tracking-[0.2em] group-hover:pl-2 transition-all">个人档案</span>
                 <UserIcon size={16} className="text-white/50 group-hover:text-white" />
             </button>
             <button 
                 onClick={() => {setView('CODEX'); setIsMenuOpen(false);}}
                 className="group flex items-center justify-between p-4 border border-white/10 hover:border-white/30 hover:bg-white/5 rounded-none transition-all"
             >
-                <span className="text-sm font-light tracking-[0.2em] group-hover:pl-2 transition-all">CODEX</span>
+                <span className="text-sm font-light tracking-[0.2em] group-hover:pl-2 transition-all">梦境图鉴</span>
                 <Grid size={16} className="text-white/50 group-hover:text-white" />
             </button>
             <button 
                 onClick={() => {setView('GALAXY'); setIsMenuOpen(false);}}
                 className="group flex items-center justify-between p-4 border border-white/10 hover:border-white/30 hover:bg-white/5 rounded-none transition-all"
             >
-                <span className="text-sm font-light tracking-[0.2em] group-hover:pl-2 transition-all">GALAXY</span>
+                <span className="text-sm font-light tracking-[0.2em] group-hover:pl-2 transition-all">共鸣星海</span>
                 <Star size={16} className="text-white/50 group-hover:text-white" />
             </button>
             <button 
                 onClick={() => {setView('ABOUT'); setIsMenuOpen(false);}}
                 className="group flex items-center justify-between p-4 border border-white/10 hover:border-white/30 hover:bg-white/5 rounded-none transition-all"
             >
-                <span className="text-sm font-light tracking-[0.2em] group-hover:pl-2 transition-all">ABOUT</span>
+                <span className="text-sm font-light tracking-[0.2em] group-hover:pl-2 transition-all">关于应用</span>
                 <Info size={16} className="text-white/50 group-hover:text-white" />
             </button>
           </div>
@@ -425,8 +430,8 @@ export default function App() {
                       <div className="space-y-4">
                           <h2 className="text-2xl font-light tracking-[0.5em] uppercase text-white">{selectedElement.name}</h2>
                           <div className="flex items-center justify-center gap-6 text-[10px] font-mono text-white/40 tracking-widest uppercase">
-                              <span className="border-b border-white/10 pb-1">Seen: {selectedElement.count}</span>
-                              <span className="border-b border-white/10 pb-1">First: {new Date(selectedElement.firstDate).toLocaleDateString()}</span>
+                              <span className="border-b border-white/10 pb-1">遇见: {selectedElement.count}</span>
+                              <span className="border-b border-white/10 pb-1">初遇: {new Date(selectedElement.firstDate).toLocaleDateString()}</span>
                           </div>
                       </div>
 
@@ -434,11 +439,11 @@ export default function App() {
                           {isAnalyzingElement ? (
                               <div className="flex flex-col items-center gap-3">
                                   <Loader2 className="animate-spin text-white/30" size={16} />
-                                  <span className="text-[10px] tracking-widest text-white/30 uppercase">Deciphering...</span>
+                                  <span className="text-[10px] tracking-widest text-white/30 uppercase">解析中...</span>
                               </div>
                           ) : (
                               <p className="text-xs text-white/70 italic leading-relaxed font-serif px-4">
-                                  “{selectedElement.analysis || 'The symbol remains silent.'}”
+                                  “{selectedElement.analysis || '这个符号保持沉默。'}”
                               </p>
                           )}
                       </div>
@@ -458,7 +463,7 @@ export default function App() {
                 <div className="p-8 border-b border-white/5 flex items-center justify-between">
                     <div>
                         <h2 className="text-lg font-light tracking-[0.2em] uppercase text-white">{category.label}</h2>
-                        <p className="text-white/30 text-[10px] mt-1 tracking-wider uppercase">Collected: {category.items.filter(i => collected[i]).length} / {category.items.length}</p>
+                        <p className="text-white/30 text-[10px] mt-1 tracking-wider uppercase">已收集: {category.items.filter(i => collected[i]).length} / {category.items.length}</p>
                     </div>
                     <Icon size={24} className="text-white/20" strokeWidth={1} />
                 </div>
@@ -514,7 +519,7 @@ export default function App() {
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 animate-zoom-in relative flex flex-col">
                {/* Header Section using FuzzyText for title */}
               <div className="mb-12 relative z-10 text-center py-12 border-b border-white/5">
-                   <h2 className="text-[10px] font-mono text-white/40 tracking-[0.4em] uppercase mb-4">Museum of Subconscious</h2>
+                   <h2 className="text-[10px] font-mono text-white/40 tracking-[0.4em] uppercase mb-4">潜意识博物馆</h2>
                    <div className="h-16 flex items-center justify-center mb-4">
                      <FuzzyText fontSize="clamp(1.5rem, 5vw, 2.5rem)" fontWeight={300} color="#fff" baseIntensity={0.1}>
                         潜意识博物馆
@@ -522,7 +527,7 @@ export default function App() {
                    </div>
                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 mt-2 bg-white/5">
                        <Fingerprint size={10} className="text-white/40" />
-                       <span className="text-[10px] font-mono tracking-widest text-white/60">{totalCollected} / 365 SPECIMENS</span>
+                       <span className="text-[10px] font-mono tracking-widest text-white/60">{totalCollected} / 365 梦境样本</span>
                    </div>
               </div>
 
@@ -573,7 +578,7 @@ export default function App() {
           {/* Header Banner */}
           <div className="absolute top-8 w-full text-center z-10 pointer-events-none animate-slide-up">
               <p className="text-[10px] text-white/50 font-mono tracking-[0.3em] uppercase animate-pulse">
-                Last night, 328 lonely souls resonated with you
+                昨夜，有 328 个孤独的灵魂与你同频
               </p>
           </div>
 
@@ -586,7 +591,7 @@ export default function App() {
                      <div className="absolute inset-0 bg-white blur-md rounded-full opacity-50" />
                   </div>
                   <div className="absolute top-10 left-1/2 -translate-x-1/2 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-700 whitespace-nowrap">
-                       <p className="text-[10px] tracking-widest uppercase text-white/80">{myDream ? myDream.title : "Waiting for a dream..."}</p>
+                       <p className="text-[10px] tracking-widest uppercase text-white/80">{myDream ? myDream.title : "等待梦境..."}</p>
                   </div>
               </div>
 
@@ -650,14 +655,14 @@ export default function App() {
                           <div className={`absolute inset-0 bg-gradient-to-r from-white/10 to-transparent transition-transform duration-500 ${isResonating ? 'translate-x-full' : '-translate-x-full group-hover:translate-x-0'}`} />
                           <div className={`flex items-center justify-center gap-2 transition-all duration-300 ${isResonating ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}>
                               <Radio size={16} className="text-white/80" />
-                              <span className="text-[10px] tracking-[0.3em] uppercase text-white/80">Send Resonance</span>
+                              <span className="text-[10px] tracking-[0.3em] uppercase text-white/80">发送共鸣信号</span>
                           </div>
                           
                           {/* Particle Explosion Effect */}
                           {isResonating && (
                                <div className="absolute inset-0 flex items-center justify-center">
                                    <div className="w-2 h-2 bg-white rounded-full animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite]" />
-                                   <span className="text-[9px] tracking-widest text-white animate-pulse absolute mt-8">Transmitting...</span>
+                                   <span className="text-[9px] tracking-widest text-white animate-pulse absolute mt-8">发送中...</span>
                                </div>
                           )}
                       </button>
@@ -667,7 +672,7 @@ export default function App() {
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none animate-fade-in">
                            <div className="text-center space-y-4">
                                <div className="w-px h-32 bg-gradient-to-b from-transparent via-white to-transparent mx-auto animate-[ping_1s_ease-out_reverse]" />
-                               <p className="text-xs text-white/80 font-light tracking-[0.2em] uppercase">Signal Sent. Sweet Dreams.</p>
+                               <p className="text-xs text-white/80 font-light tracking-[0.2em] uppercase">信号已发送。愿你好梦。</p>
                            </div>
                       </div>
                   )}
@@ -684,10 +689,10 @@ export default function App() {
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-light tracking-[0.3em] uppercase">Oneiric</h2>
-            <p className="text-[10px] text-white/40 tracking-widest uppercase">Dream Log v2.5.0</p>
+            <p className="text-[10px] text-white/40 tracking-widest uppercase">梦境日志 v2.5.0</p>
           </div>
           <p className="text-white/60 text-xs max-w-xs leading-loose font-light">
-              We capture the fleeting fragments of the subconscious <br/>and transmute them into digital eternity.
+              我们捕捉潜意识的碎片<br/>将其铸成数字永恒。
           </p>
       </div>
   );
@@ -708,7 +713,7 @@ export default function App() {
               <h2 className="text-xl font-light tracking-widest">{user.name}</h2>
               <div className="inline-block px-3 py-1 border border-white/10">
                   <p className={`text-[10px] tracking-[0.2em] uppercase ${user.isPro ? 'text-white' : 'text-white/40'}`}>
-                      {user.isPro ? 'PRO MEMBER' : 'FREE TIER'}
+                      {user.isPro ? '专业会员' : '免费账户'}
                   </p>
               </div>
           </div>
@@ -720,7 +725,7 @@ export default function App() {
                     : 'border-white/40 hover:bg-white hover:text-black hover:border-white'
                 }`}
           >
-              {user.isPro ? 'Manage' : 'Upgrade'}
+              {user.isPro ? '管理' : '升级'}
           </button>
       </div>
   );
@@ -763,7 +768,7 @@ export default function App() {
                      {showResonanceNotification && (
                          <div className="absolute top-12 right-0 w-64 bg-black/90 border border-white/10 backdrop-blur-xl p-4 rounded-xl z-50 animate-slide-up shadow-2xl">
                              <p className="text-[10px] text-white/80 leading-relaxed font-light tracking-wide">
-                                 In the past 24 hours, <span className="text-white font-mono">15</span> strangers embraced your dream.
+                                 过去24小时内，有 <span className="text-white font-mono">15</span> 位陌生人拥抱了你的梦境。
                              </p>
                              <div className="absolute top-[-4px] right-3 w-2 h-2 bg-white/10 rotate-45 border-l border-t border-white/10" />
                          </div>
@@ -802,11 +807,11 @@ export default function App() {
 
         {/* DETAIL VIEW */}
         {view === 'DETAIL' && selectedDream && (
-          <div className="h-full flex flex-col items-center justify-center p-6 relative">
-            <div className="animate-slide-up flex flex-col items-center w-full max-w-sm">
+          <div className="h-full w-full flex flex-col items-center justify-center p-6 relative overflow-y-auto custom-scrollbar">
+            <div className="animate-slide-up flex flex-col items-center w-[75%] max-w-sm h-full justify-center pb-20">
               <div 
                 onClick={() => togglePlayback(selectedDream.audioUrl)}
-                className="cursor-pointer group relative w-full aspect-[9/16] shadow-2xl border border-white/10"
+                className="cursor-pointer group relative w-full aspect-[9/16] shadow-2xl border border-white/10 rounded-sm overflow-hidden"
               >
                   <PixelCard 
                     color={selectedDream.color} 
@@ -840,7 +845,7 @@ export default function App() {
                     {selectedDream.videoStatus === 'processing' && (
                          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center space-y-4">
                              <Loader2 className="w-8 h-8 text-white/50 animate-spin" strokeWidth={1} />
-                             <p className="text-[10px] font-mono tracking-widest uppercase text-white/50 animate-pulse">Manifesting...</p>
+                             <p className="text-[10px] font-mono tracking-widest uppercase text-white/50 animate-pulse">影像显化中...</p>
                          </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none" />
@@ -855,15 +860,15 @@ export default function App() {
                   </PixelCard>
               </div>
               
-              <div className="w-full mt-8 flex flex-col gap-3">
+              <div className="w-full mt-6 flex flex-col gap-3">
                   <button onClick={handleDeepAnalysis} disabled={isAnalyzing} className="w-full py-4 border border-white/10 flex items-center justify-center gap-3 hover:bg-white/5 transition-all group animate-slide-up">
                       {isAnalyzing ? <Loader2 size={14} className="text-white animate-spin" /> : <BookOpen size={14} className="text-white/70" strokeWidth={1.5} />}
-                      <span className="text-[10px] font-light tracking-[0.2em] uppercase">{isAnalyzing ? 'Analyzing...' : 'Deep Analysis'}</span>
+                      <span className="text-[10px] font-light tracking-[0.2em] uppercase">{isAnalyzing ? '分析中...' : '深度解读'}</span>
                   </button>
                   {user.isPro && selectedDream.videoStatus === 'pending' && (
                       <button onClick={() => handleTriggerVideo(selectedDream)} className="w-full py-4 border border-white/20 bg-white/5 flex items-center justify-center gap-3 hover:border-white/40 transition-all group animate-slide-up">
                           <Activity size={14} className="text-white/70" strokeWidth={1.5} />
-                          <span className="text-[10px] font-light tracking-[0.2em] uppercase">Generate Video</span>
+                          <span className="text-[10px] font-light tracking-[0.2em] uppercase">生成视频</span>
                       </button>
                   )}
                   <div className="flex justify-between items-center px-2 mt-2 opacity-40 hover:opacity-100 transition-opacity text-white">
@@ -882,7 +887,7 @@ export default function App() {
                     <div className="p-6 border-b border-white/10 flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <BookOpen size={16} className="text-white/60" strokeWidth={1.5}/>
-                            <h3 className="text-xs font-light tracking-[0.2em] uppercase text-white">Interpretation</h3>
+                            <h3 className="text-xs font-light tracking-[0.2em] uppercase text-white">梦境解读</h3>
                         </div>
                         <button onClick={() => setShowAnalysisModal(false)} className="opacity-50 hover:opacity-100 transition-opacity"><X size={18} strokeWidth={1.5}/></button>
                     </div>
@@ -891,7 +896,7 @@ export default function App() {
                         <div className="text-white/70 leading-loose text-justify font-serif text-sm whitespace-pre-wrap space-y-4">{selectedDream.detailedAnalysis}</div>
                     </div>
                     <div className="p-6 border-t border-white/10 flex justify-center">
-                        <button onClick={() => handleShareText(selectedDream.detailedAnalysis!)} className="px-6 py-2 border border-white/10 hover:bg-white/5 text-white text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 transition-all"><Share2 size={12} /><span>Share</span></button>
+                        <button onClick={() => handleShareText(selectedDream.detailedAnalysis!)} className="px-6 py-2 border border-white/10 hover:bg-white/5 text-white text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 transition-all"><Share2 size={12} /><span>分享</span></button>
                     </div>
                 </div>
             </div>
@@ -907,12 +912,12 @@ export default function App() {
                  {processingStage !== 'idle' ? (
                      <>
                         <Loader2 className="animate-spin w-6 h-6 text-white/60" strokeWidth={1} />
-                        <p className="text-[10px] font-light tracking-[0.3em] uppercase animate-pulse">{processingStage === 'analyzing' ? 'Connecting...' : 'Dreaming...'}</p>
+                        <p className="text-[10px] font-light tracking-[0.3em] uppercase animate-pulse">{processingStage === 'analyzing' ? '连接中...' : '造梦中...'}</p>
                      </>
                  ) : isRecording ? (
                      <p className="text-xl font-mono text-white animate-pulse tracking-widest">{formatTime(recordingTime)}</p>
                  ) : (
-                     <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase">Press to Record</p>
+                     <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase">按住记录</p>
                  )}
             </div>
             
@@ -922,7 +927,7 @@ export default function App() {
                 </div>
             </button>
             
-            {isRecording && <button onClick={() => {stopRecording(); setIsRecording(false); setView('LIST');}} className="mt-12 text-white/20 hover:text-white transition-colors uppercase text-[10px] tracking-[0.2em]">Cancel</button>}
+            {isRecording && <button onClick={() => {stopRecording(); setIsRecording(false); setView('LIST');}} className="mt-12 text-white/20 hover:text-white transition-colors uppercase text-[10px] tracking-[0.2em]">取消</button>}
           </div>
         )}
       </main>

@@ -76,6 +76,12 @@ const FuzzyText: React.FC<FuzzyTextProps> = ({
     window.addEventListener("resize", resize);
 
     const render = () => {
+      // CRITICAL FIX: Handle 0 dimensions to prevent crash
+      if (width <= 0 || height <= 0 || canvas.width <= 0 || canvas.height <= 0) {
+          animationFrameId = requestAnimationFrame(render);
+          return;
+      }
+
       // Clear
       ctx.clearRect(0, 0, width, height);
 
@@ -86,33 +92,33 @@ const FuzzyText: React.FC<FuzzyTextProps> = ({
       // Get pixel data
       // Note: we are grabbing the scaled region. 
       // On High DPI, we need to grab the full canvas buffer resolution
-      const dpr = window.devicePixelRatio || 1;
       const bufferWidth = canvas.width;
       const bufferHeight = canvas.height;
       
-      const imageData = ctx.getImageData(0, 0, bufferWidth, bufferHeight);
-      const data = imageData.data;
-      
-      // Determine current intensity
-      const intensity = isHovered && enableHover ? hoverIntensity : baseIntensity;
+      try {
+        const imageData = ctx.getImageData(0, 0, bufferWidth, bufferHeight);
+        const data = imageData.data;
+        
+        // Determine current intensity
+        const intensity = isHovered && enableHover ? hoverIntensity : baseIntensity;
 
-      // Apply noise
-      // We iterate by 4 because each pixel has R, G, B, A
-      for (let i = 0; i < data.length; i += 4) {
-        // Only modify if pixel has some opacity (is part of the text)
-        if (data[i + 3] > 0) {
-          // 1. Alpha Noise: Randomly reduce opacity
-          // This creates the "fuzzy" static look
-          if (Math.random() < intensity) {
-             data[i + 3] = data[i + 3] * (0.5 + Math.random() * 0.5); 
+        // Apply noise
+        // We iterate by 4 because each pixel has R, G, B, A
+        for (let i = 0; i < data.length; i += 4) {
+          // Only modify if pixel has some opacity (is part of the text)
+          if (data[i + 3] > 0) {
+            // 1. Alpha Noise: Randomly reduce opacity
+            // This creates the "fuzzy" static look
+            if (Math.random() < intensity) {
+               data[i + 3] = data[i + 3] * (0.5 + Math.random() * 0.5); 
+            }
           }
-          
-          // 2. Position Noise (simulated by color shifting adjacent pixels - simplified here to just alpha/color noise for performance)
-          // For a true fuzzy text, we often just mess with alpha or slight color jitter.
         }
-      }
 
-      ctx.putImageData(imageData, 0, 0);
+        ctx.putImageData(imageData, 0, 0);
+      } catch (e) {
+        // Ignore IndexSizeError or other transient canvas errors if they still occur
+      }
 
       animationFrameId = requestAnimationFrame(render);
     };

@@ -94,7 +94,7 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
           {items.map((dream, index) => (
             <div 
               key={dream.id}
-              className="w-full max-w-[280px] transition-all duration-300 ease-out"
+              className="w-[70%] max-w-[280px] transition-all duration-300 ease-out"
               style={{
                 height: ITEM_HEIGHT,
                 ...getStyle(index)
