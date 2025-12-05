@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import { Dream } from "../types";
 
 const getClient = () => {
   const apiKey = process.env.API_KEY;
@@ -31,6 +32,7 @@ export interface AudioAnalysisResult {
   color: string;
   imagePrompt: string;
   videoPrompt: string;
+  elements: string[];
 }
 
 export const processAudioDream = async (audioBlob: Blob): Promise<AudioAnalysisResult> => {
@@ -62,7 +64,8 @@ export const processAudioDream = async (audioBlob: Blob): Promise<AudioAnalysisR
              * 必须使用英文。
              * 描述一种电影般的、梦幻的、超现实的视觉风格。
              * 强调光影、运动（例如：slow motion, floating, morphing, zooming）和氛围。
-             * 它是给 Veo 视频生成模型使用的，所以要包含镜头语言（如：Cinematic shot, 8k, highly detailed）。`
+             * 它是给 Veo 视频生成模型使用的，所以要包含镜头语言（如：Cinematic shot, 8k, highly detailed）。
+          8. 提取 3-6 个梦境元素标签（名词），用于图鉴收集（请使用中文，例如：猫、大海、牙齿、考试、飞行）。`
         }
       ]
     },
@@ -77,9 +80,10 @@ export const processAudioDream = async (audioBlob: Blob): Promise<AudioAnalysisR
           mood: { type: Type.STRING },
           color: { type: Type.STRING },
           imagePrompt: { type: Type.STRING },
-          videoPrompt: { type: Type.STRING }
+          videoPrompt: { type: Type.STRING },
+          elements: { type: Type.ARRAY, items: { type: Type.STRING } }
         },
-        required: ["title", "keyPoints", "interpretation", "mood", "color", "imagePrompt", "videoPrompt"]
+        required: ["title", "keyPoints", "interpretation", "mood", "color", "imagePrompt", "videoPrompt", "elements"]
       }
     }
   });
@@ -164,4 +168,49 @@ export const generateDreamVideo = async (prompt: string): Promise<string> => {
   
   // Return a local Object URL
   return URL.createObjectURL(blob);
+};
+
+export const analyzeDreamDepth = async (dream: Dream): Promise<string> => {
+  const ai = getClient();
+  
+  const prompt = `
+    请作为一位资深的心理学专家和梦境解读者，为以下梦境提供一份深度的解析报告。
+    
+    梦境标题：${dream.title}
+    关键点：${dream.keyPoints.join(', ')}
+    初步感受：${dream.interpretation}
+    情绪基调：${dream.mood}
+
+    要求：
+    1. 字数在 450-500 字左右（中文）。
+    2. 语言通俗易懂，富有同理心，但也具备心理学深度。
+    3. 分析梦境中象征物的含义。
+    4. 给出生活建议。
+    5. 输出为纯文本段落。
+  `;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: { parts: [{ text: prompt }] },
+  });
+
+  return response.text || "梦境迷雾太重，暂时无法解读。";
+};
+
+export const analyzeElementSymbolism = async (element: string, count: number): Promise<string> => {
+  const ai = getClient();
+  const prompt = `
+    用户在梦中梦到了"${element}"，这是第 ${count} 次出现。
+    请用一句话简短地解读这个意象在心理学或潜意识层面的含义。
+    风格要求：神秘、治愈、富有哲理。
+    例如：“猫在你的梦里频繁出现，代表着你对独立和神秘感的渴望。”
+    直接输出这句话，不要加引号或其他前缀。
+  `;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: { parts: [{ text: prompt }] },
+  });
+
+  return response.text?.trim() || `${element} 是你潜意识中一个神秘的信号。`;
 };

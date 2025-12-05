@@ -1,17 +1,17 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useState } from 'react';
 import { Dream } from '../types';
 import PixelCard from './PixelCard';
 import FuzzyText from './FuzzyText';
 import Particles from './Particles';
-import { Calendar, Play } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 interface InfiniteMenuProps {
   items: Dream[];
   onSelect: (dream: Dream) => void;
 }
 
-const ITEM_HEIGHT = 200; // Increased height for image
-const CONTAINER_HEIGHT = 600; // Visible area
+const ITEM_HEIGHT = 200; 
+const CONTAINER_HEIGHT = 600; 
 
 const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -21,23 +21,22 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
   if (items.length === 0) {
     return (
       <div className="relative h-full w-full flex flex-col items-center justify-center overflow-hidden">
-        {/* Background only visible when empty */}
         <Particles 
-            particleCount={120} 
+            particleCount={80} 
             minSize={0.5} 
-            maxSize={2} 
-            speed={0.2} 
-            particleColors={['#ffffff', '#a8a29e', '#64748b']} // White to slate grey
+            maxSize={1.5} 
+            speed={0.1} 
+            particleColors={['#333', '#555', '#777']} 
         />
         
         <div className="z-10 w-full max-w-3xl px-6">
            <FuzzyText 
-             fontSize="clamp(3rem, 10vw, 6rem)" 
-             fontWeight={900} 
+             fontSize="clamp(3rem, 8vw, 5rem)" 
+             fontWeight={100} 
              color="#ffffff" 
              enableHover={true}
-             baseIntensity={0.2}
-             hoverIntensity={0.6}
+             baseIntensity={0.1}
+             hoverIntensity={0.4}
            >
              去做一个梦吧
            </FuzzyText>
@@ -62,28 +61,28 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
 
     if (distance < maxDist) {
       const ratio = distance / maxDist;
-      scale = 1 - (ratio * 0.15);
-      opacity = 1 - (ratio * 0.6);
-      blur = ratio * 4;
+      scale = 1 - (ratio * 0.1);
+      opacity = 1 - (ratio * 0.5);
+      blur = ratio * 2;
     } else {
-      scale = 0.85;
-      opacity = 0.4;
-      blur = 4;
+      scale = 0.9;
+      opacity = 0.3;
+      blur = 2;
     }
 
     return {
       transform: `scale(${scale})`,
-      opacity: Math.max(0.2, opacity),
+      opacity: Math.max(0.1, opacity),
       filter: `blur(${blur}px)`,
       zIndex: Math.round((1 - (distance / maxDist)) * 100),
     };
   };
 
   return (
-    <div className="relative w-full h-full flex justify-center items-center overflow-hidden bg-void">
+    <div className="relative w-full h-full flex justify-center items-center overflow-hidden bg-black">
       {/* Overlay Gradients */}
-      <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black to-transparent z-20 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent z-20 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-20 pointer-events-none" />
 
       <div 
         ref={containerRef}
@@ -91,11 +90,11 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
         className="w-full h-full overflow-y-scroll no-scrollbar py-[50vh] scroll-smooth"
         style={{ height: CONTAINER_HEIGHT }}
       >
-        <div className="flex flex-col items-center space-y-6 px-4 w-full">
+        <div className="flex flex-col items-center space-y-8 px-4 w-full">
           {items.map((dream, index) => (
             <div 
               key={dream.id}
-              className="w-full max-w-xs transition-all duration-150 ease-out"
+              className="w-full max-w-[280px] transition-all duration-300 ease-out"
               style={{
                 height: ITEM_HEIGHT,
                 ...getStyle(index)
@@ -104,9 +103,9 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
               <PixelCard 
                 color={dream.color}
                 onClick={() => onSelect(dream)}
-                className="h-full w-full rounded-lg overflow-hidden relative group"
+                className="h-full w-full overflow-hidden relative group border-none bg-zinc-900"
               >
-                {/* Background Video/Image with Gradient Overlay */}
+                {/* Background Video/Image */}
                 {dream.videoUrl ? (
                    <div className="absolute inset-0 z-0">
                         <video
@@ -117,29 +116,30 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
                             onMouseOver={event => (event.target as HTMLVideoElement).play()}
                             onMouseOut={event => (event.target as HTMLVideoElement).pause()}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
                     </div>
                 ) : dream.imageUrl && (
                     <div className="absolute inset-0 z-0">
                         <img 
                             src={dream.imageUrl} 
                             alt={dream.title} 
-                            className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500"
+                            className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500 grayscale group-hover:grayscale-0"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
                     </div>
                 )}
+                
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-                <div className="relative z-10 h-full p-6 flex flex-col justify-end pointer-events-none">
-                  <h3 className="text-xl font-bold text-white truncate drop-shadow-lg">{dream.title}</h3>
-                  <div className="flex items-center space-x-2 text-xs text-white/80 mt-1">
-                    <Calendar size={12} />
+                <div className="relative z-10 h-full p-5 flex flex-col justify-end pointer-events-none">
+                  <h3 className="text-lg font-light text-white truncate tracking-wider">{dream.title}</h3>
+                  
+                  <div className="flex items-center space-x-2 text-[10px] text-white/60 mt-2 font-mono uppercase">
+                    <Clock size={10} />
                     <span>{new Date(dream.date).toLocaleDateString('zh-CN')}</span>
                   </div>
                   
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap gap-1 mt-3">
                     {dream.keyPoints && dream.keyPoints.slice(0, 2).map(pt => (
-                        <span key={pt} className="text-[10px] px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full border border-white/10 truncate max-w-[100px]">
+                        <span key={pt} className="text-[9px] px-2 py-px bg-white/10 backdrop-blur-md border border-white/5 truncate max-w-[80px] text-white/80">
                             {pt}
                         </span>
                     ))}

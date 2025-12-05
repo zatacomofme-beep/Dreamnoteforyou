@@ -16,11 +16,13 @@ export interface Dream {
   videoPrompt: string; // Stored for delayed generation
   keyPoints: string[]; // Extracted from audio
   interpretation: string; // Short summary
+  detailedAnalysis?: string; // Long form AI analysis
   mood?: string;
   color: string; // Hex color
+  elements?: string[]; // New: For Dream Codex (e.g., "Fire", "Cat", "Flying")
 }
 
-export type ViewState = 'LIST' | 'ADD' | 'DETAIL' | 'PROFILE';
+export type ViewState = 'LIST' | 'ADD' | 'DETAIL' | 'PROFILE' | 'CODEX' | 'GALAXY' | 'ABOUT';
 
 export interface PixelConfig {
   gap: number;
