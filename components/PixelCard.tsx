@@ -98,9 +98,13 @@ const PixelCard: React.FC<PixelCardProps> = ({ children, className = "", color =
     >
       <canvas 
         ref={canvasRef} 
-        className="absolute inset-0 pointer-events-none z-0"
+        className="absolute inset-0 pointer-events-none z-10" 
       />
-      <div className="relative z-10 h-full">
+      {/* 
+         Video elements inside children need z-index lower than canvas (10) but content logic handles that.
+         We ensure the container stacks correctly. 
+      */}
+      <div className="relative z-0 h-full w-full">
         {children}
       </div>
       
@@ -119,10 +123,10 @@ const PixelCard: React.FC<PixelCardProps> = ({ children, className = "", color =
       )}
 
       {/* Corner Accents */}
-      <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/40" />
-      <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/40" />
-      <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/40" />
-      <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/40" />
+      <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/40 z-20 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/40 z-20 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/40 z-20 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/40 z-20 pointer-events-none" />
     </div>
   );
 };

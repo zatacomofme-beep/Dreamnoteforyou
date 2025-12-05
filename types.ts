@@ -1,16 +1,26 @@
+export interface User {
+  id: string;
+  name: string;
+  isPro: boolean;
+  avatar?: string;
+}
+
 export interface Dream {
   id: string;
   title: string; // Generated from analysis
   date: string; // ISO string
   audioUrl: string; // Blob URL for playback
-  imageUrl?: string; // Base64 or URL
+  imageUrl?: string; // Base64 or URL (Fallback)
+  videoUrl?: string; // Blob URL for Veo video
+  videoStatus: 'pending' | 'processing' | 'completed' | 'failed'; // Track Veo generation
+  videoPrompt: string; // Stored for delayed generation
   keyPoints: string[]; // Extracted from audio
   interpretation: string; // Short summary
   mood?: string;
   color: string; // Hex color
 }
 
-export type ViewState = 'LIST' | 'ADD' | 'DETAIL';
+export type ViewState = 'LIST' | 'ADD' | 'DETAIL' | 'PROFILE';
 
 export interface PixelConfig {
   gap: number;

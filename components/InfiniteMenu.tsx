@@ -1,7 +1,9 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Dream } from '../types';
 import PixelCard from './PixelCard';
-import { Sparkles, Calendar, Play } from 'lucide-react';
+import FuzzyText from './FuzzyText';
+import Particles from './Particles';
+import { Calendar, Play } from 'lucide-react';
 
 interface InfiniteMenuProps {
   items: Dream[];
@@ -15,12 +17,31 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
 
-  // If no items, show empty state
+  // If no items, show empty state with Particles Background
   if (items.length === 0) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-white/50 space-y-4">
-        <Sparkles className="w-12 h-12 opacity-50" />
-        <p className="text-lg">暂无梦境记录</p>
+      <div className="relative h-full w-full flex flex-col items-center justify-center overflow-hidden">
+        {/* Background only visible when empty */}
+        <Particles 
+            particleCount={120} 
+            minSize={0.5} 
+            maxSize={2} 
+            speed={0.2} 
+            particleColors={['#ffffff', '#a8a29e', '#64748b']} // White to slate grey
+        />
+        
+        <div className="z-10 w-full max-w-3xl px-6">
+           <FuzzyText 
+             fontSize="clamp(3rem, 10vw, 6rem)" 
+             fontWeight={900} 
+             color="#ffffff" 
+             enableHover={true}
+             baseIntensity={0.2}
+             hoverIntensity={0.6}
+           >
+             去做一个梦吧
+           </FuzzyText>
+        </div>
       </div>
     );
   }
@@ -74,7 +95,7 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
           {items.map((dream, index) => (
             <div 
               key={dream.id}
-              className="w-full max-w-md transition-all duration-150 ease-out"
+              className="w-full max-w-xs transition-all duration-150 ease-out"
               style={{
                 height: ITEM_HEIGHT,
                 ...getStyle(index)
@@ -85,8 +106,20 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
                 onClick={() => onSelect(dream)}
                 className="h-full w-full rounded-lg overflow-hidden relative group"
               >
-                {/* Background Image with Gradient Overlay */}
-                {dream.imageUrl && (
+                {/* Background Video/Image with Gradient Overlay */}
+                {dream.videoUrl ? (
+                   <div className="absolute inset-0 z-0">
+                        <video
+                            src={dream.videoUrl}
+                            className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500"
+                            muted
+                            loop
+                            onMouseOver={event => (event.target as HTMLVideoElement).play()}
+                            onMouseOut={event => (event.target as HTMLVideoElement).pause()}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                    </div>
+                ) : dream.imageUrl && (
                     <div className="absolute inset-0 z-0">
                         <img 
                             src={dream.imageUrl} 
@@ -97,7 +130,7 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
                     </div>
                 )}
 
-                <div className="relative z-10 h-full p-6 flex flex-col justify-end">
+                <div className="relative z-10 h-full p-6 flex flex-col justify-end pointer-events-none">
                   <h3 className="text-xl font-bold text-white truncate drop-shadow-lg">{dream.title}</h3>
                   <div className="flex items-center space-x-2 text-xs text-white/80 mt-1">
                     <Calendar size={12} />
