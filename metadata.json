@@ -1,0 +1,7 @@
+{
+  "name": "Oneiric - 梦境日志",
+  "description": "一个基于 AI 的超现实像素风梦境日志，用于解读你的潜意识。具有无限滚动界面和交互式像素卡片。",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
