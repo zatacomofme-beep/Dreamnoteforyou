@@ -602,7 +602,12 @@ export default function App() {
                  return (
                   <button
                       key={star.id}
-                      style={{ left: `${star.x}%`, top: `${star.y}%` }}
+                      style={{ 
+                        left: `${star.x}%`, 
+                        top: `${star.y}%`,
+                        animation: `float ${12 + (idx * 4) % 15}s ease-in-out infinite alternate`,
+                        animationDelay: `-${(idx * 2) % 10}s`
+                      }}
                       onClick={() => handleGalaxyClick(star)}
                       className="absolute p-6 group z-20 hover:z-40 transition-all duration-500"
                   >
@@ -929,7 +934,7 @@ export default function App() {
                  ) : isRecording ? (
                      <p className="text-xl font-mono text-white animate-pulse tracking-widest">{formatTime(recordingTime)}</p>
                  ) : (
-                     <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase">按住记录</p>
+                     <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase">点击记录</p>
                  )}
             </div>
             
