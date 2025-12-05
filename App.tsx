@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause } from 'lucide-react';
+import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause, ScrollText, ShieldCheck } from 'lucide-react';
 import { Dream, ViewState, User } from './types';
 import InfiniteMenu from './components/InfiniteMenu';
 import PixelCard from './components/PixelCard';
@@ -14,6 +14,66 @@ const CODEX_CATEGORIES = {
   EMOTION: { id: 'emotion', label: '核心情绪', icon: Brain, description: '内在的波澜', items: ['恐惧', '喜悦', '悲伤', '焦虑', '平静', '愤怒', '困惑', '孤独'] },
   SCENE: { id: 'scene', label: '经典场景', icon: Clapperboard, description: '循环的剧本', items: ['飞翔', '坠落', '追逐', '考试', '迟到', '掉牙', '裸体', '迷路', '开车', '电梯'] }
 };
+
+// --- Legal Text Constants ---
+const PRIVACY_POLICY = `
+**隐私政策**
+
+**生效日期：2024年1月1日**
+
+**成都柠檬特橙网络科技有限公司**（以下简称“我们”）非常重视用户的隐私和个人信息保护。本隐私政策旨在向您说明我们如何收集、使用、存储和保护您的个人信息。
+
+**1. 我们收集的信息**
+*   **梦境记录数据**：为了提供梦境解读服务，我们会收集您上传的语音录音或输入的文字描述。
+*   **设备权限**：使用语音记录功能时，我们需要获取您的麦克风权限。
+*   **本地存储**：您的梦境日记主要存储在您设备的本地存储（LocalStorage）中，除非您主动使用云端同步功能（如有）。
+
+**2. 信息的用途**
+*   **AI分析**：我们将您的梦境描述发送至第三方人工智能服务（如 Google Gemini API）进行处理，以生成标题、解读、情绪分析及相关视觉图像。
+*   **服务优化**：我们可能使用匿名化的统计数据来改进应用性能和用户体验。
+
+**3. 信息安全**
+我们采取合理的技术手段保护您的信息安全。虽然我们使用先进的 AI 技术进行处理，但请注意，没有任何互联网传输是百分之百安全的。
+
+**4. 第三方服务**
+本应用包含第三方 AI 生成服务。这些服务可能有其独立的隐私政策，建议您查阅相关说明。
+
+**5. 联系我们**
+如您对本隐私政策有任何疑问，请联系我们：
+*   联系人：李本世
+*   邮箱：alizabos@163.com
+`;
+
+const USER_AGREEMENT = `
+**用户协议**
+
+**生效日期：2024年1月1日**
+
+欢迎使用 Oneiric 梦境日志（以下简称“本应用”）。本应用由 **成都柠檬特橙网络科技有限公司** 开发并运营。请您在使用前仔细阅读以下条款。
+
+**1. 服务内容**
+本应用提供梦境记录、AI 辅助解读、情感分析及图像/视频生成服务。
+
+**2. 免责声明（重要）**
+*   **非医疗建议**：本应用提供的梦境解读、心理分析仅基于 AI 模型生成，仅供娱乐和自我探索参考，**不构成任何专业的心理咨询或医疗诊断建议**。如有严重的心理困扰，请咨询专业医生。
+*   **内容准确性**：AI 生成的内容可能存在虚构或不准确的情况，我们不对其准确性负责。
+
+**3. 用户行为规范**
+您在使用本应用时，不得录入或上传包含以下内容的信息：
+*   违反国家法律法规的；
+*   侵犯他人隐私或知识产权的；
+*   包含暴力、色情、仇恨言论的。
+
+**4. 知识产权**
+本应用的界面设计、源代码及相关知识产权归成都柠檬特橙网络科技有限公司所有。用户生成的梦境记录归用户本人所有。
+
+**5. 协议修改**
+我们保留随时修改本协议的权利。修改后的协议一旦公布即生效。
+
+**6. 联系方式**
+*   联系人：李本世
+*   邮箱：alizabos@163.com
+`;
 
 // Mock Data
 const INITIAL_DREAMS: Dream[] = [];
@@ -65,6 +125,9 @@ export default function App() {
   const [codexCategory, setCodexCategory] = useState<string | null>(null);
   const [selectedElement, setSelectedElement] = useState<{name: string, count: number, firstDate: string, imageUrl: string, analysis?: string} | null>(null);
   const [isAnalyzingElement, setIsAnalyzingElement] = useState(false);
+
+  // Legal Modal State
+  const [legalView, setLegalView] = useState<'PRIVACY' | 'TERMS' | null>(null);
 
   // Recording State
   const [isRecording, setIsRecording] = useState(false);
@@ -228,6 +291,10 @@ export default function App() {
   };
 
   const handleBack = () => {
+    if (legalView) {
+        setLegalView(null);
+        return;
+    }
     if (selectedElement) {
         setSelectedElement(null);
         return;
@@ -688,17 +755,59 @@ export default function App() {
   };
 
   const renderAbout = () => (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center animate-slide-up space-y-8">
-          <div className="w-16 h-16 border border-white/10 flex items-center justify-center rotate-45 mb-4">
-              <Eye size={24} className="text-white/80 -rotate-45" strokeWidth={1} />
+      <div className="flex-1 w-full max-w-md mx-auto flex flex-col items-center p-8 animate-slide-up overflow-y-auto custom-scrollbar">
+          {/* Logo Section */}
+          <div className="flex flex-col items-center space-y-6 mb-12 mt-10">
+              <div className="w-20 h-20 border border-white/10 flex items-center justify-center rotate-45 mb-2 relative group">
+                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <Eye size={32} className="text-white/80 -rotate-45" strokeWidth={1} />
+              </div>
+              <div className="text-center space-y-2">
+                <h2 className="text-2xl font-light tracking-[0.3em] uppercase">Oneiric</h2>
+                <p className="text-[10px] text-white/40 tracking-widest uppercase">梦境日志 v2.5.0</p>
+              </div>
           </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-light tracking-[0.3em] uppercase">Oneiric</h2>
-            <p className="text-[10px] text-white/40 tracking-widest uppercase">梦境日志 v2.5.0</p>
+
+          {/* Slogan */}
+          <div className="relative py-8 px-4 text-center mb-12">
+              <span className="absolute top-0 left-0 text-2xl text-white/10 font-serif">“</span>
+              <p className="text-white/70 text-sm font-light leading-loose font-serif italic">
+                  我们捕捉潜意识的碎片<br/>将其铸成数字永恒。
+              </p>
+              <span className="absolute bottom-0 right-0 text-2xl text-white/10 font-serif">”</span>
           </div>
-          <p className="text-white/60 text-xs max-w-xs leading-loose font-light">
-              我们捕捉潜意识的碎片<br/>将其铸成数字永恒。
-          </p>
+
+          {/* Info Section */}
+          <div className="w-full space-y-8 border-t border-white/10 pt-10">
+              
+              {/* Company Info */}
+              <div className="flex flex-col items-center space-y-2 text-center">
+                  <span className="text-[9px] text-white/30 tracking-[0.2em] uppercase">主体信息</span>
+                  <p className="text-xs text-white/80 font-light tracking-wide">成都柠檬特橙网络科技有限公司</p>
+              </div>
+
+              {/* Contact Info */}
+              <div className="flex flex-col items-center space-y-2 text-center">
+                  <span className="text-[9px] text-white/30 tracking-[0.2em] uppercase">联系我们</span>
+                  <div className="text-xs text-white/80 font-light flex flex-col items-center gap-1">
+                      <span>李本世</span>
+                      <a href="mailto:alizabos@163.com" className="text-white/60 hover:text-white transition-colors border-b border-white/10 pb-0.5">
+                          alizabos@163.com
+                      </a>
+                  </div>
+              </div>
+
+              {/* Legal Links */}
+              <div className="flex items-center justify-center gap-6 pt-4">
+                   <button onClick={() => setLegalView('PRIVACY')} className="text-[10px] text-white/50 hover:text-white transition-colors uppercase tracking-widest">隐私政策</button>
+                   <div className="w-px h-3 bg-white/10" />
+                   <button onClick={() => setLegalView('TERMS')} className="text-[10px] text-white/50 hover:text-white transition-colors uppercase tracking-widest">用户协议</button>
+              </div>
+          </div>
+          
+          <div className="mt-auto pt-12 pb-4 text-[9px] text-white/10 font-mono tracking-widest uppercase text-center">
+              Copyright © 2024 Lemon Orange Tech
+          </div>
       </div>
   );
 
@@ -746,7 +855,9 @@ export default function App() {
         <div 
             className="cursor-pointer group z-50 hover:opacity-70 transition-opacity" 
             onClick={() => {
-                if (selectedElement) {
+                if (legalView) {
+                    setLegalView(null);
+                } else if (selectedElement) {
                     handleBack();
                 } else if (codexCategory) {
                     handleBack();
@@ -755,7 +866,7 @@ export default function App() {
                 }
             }}
         >
-             {(isMenuOpen || codexCategory || selectedElement) ? <ArrowLeft size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />}
+             {(isMenuOpen || codexCategory || selectedElement || legalView) ? <ArrowLeft size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />}
         </div>
 
         {/* Home View Header Actions */}
@@ -789,7 +900,7 @@ export default function App() {
             </div>
         )}
 
-        {(view !== 'LIST' && !isMenuOpen && !codexCategory && !selectedElement) && (
+        {(view !== 'LIST' && !isMenuOpen && !codexCategory && !selectedElement && !legalView) && (
           <button 
             onClick={handleBack}
             className="hover:opacity-70 transition-opacity"
@@ -809,6 +920,29 @@ export default function App() {
         {view === 'CODEX' && renderCodex()}
         {view === 'GALAXY' && renderGalaxy()}
         {view === 'ABOUT' && renderAbout()}
+
+        {/* LEGAL MODAL */}
+        {legalView && (
+            <div className="absolute inset-0 z-[60] bg-black/95 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-in">
+                <div className="bg-black border border-white/10 w-full max-w-lg max-h-[85vh] flex flex-col animate-zoom-in shadow-2xl">
+                    <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+                        <div className="flex items-center gap-3">
+                            {legalView === 'PRIVACY' ? <ShieldCheck size={16} className="text-white/60" strokeWidth={1.5}/> : <ScrollText size={16} className="text-white/60" strokeWidth={1.5}/>}
+                            <h3 className="text-xs font-light tracking-[0.2em] uppercase text-white">{legalView === 'PRIVACY' ? '隐私政策' : '用户协议'}</h3>
+                        </div>
+                        <button onClick={() => setLegalView(null)} className="opacity-50 hover:opacity-100 transition-opacity"><X size={18} strokeWidth={1.5}/></button>
+                    </div>
+                    <div className="p-8 overflow-y-auto custom-scrollbar flex-1 bg-black">
+                        <div className="text-white/80 leading-loose text-justify font-sans text-xs whitespace-pre-wrap space-y-4">
+                            {legalView === 'PRIVACY' ? PRIVACY_POLICY : USER_AGREEMENT}
+                        </div>
+                    </div>
+                    <div className="p-4 border-t border-white/10 flex justify-center bg-white/5">
+                        <p className="text-[9px] text-white/30 uppercase tracking-widest">成都柠檬特橙网络科技有限公司</p>
+                    </div>
+                </div>
+            </div>
+        )}
 
         {/* DETAIL VIEW */}
         {view === 'DETAIL' && selectedDream && (
