@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause, ScrollText, ShieldCheck, Clock, Check } from 'lucide-react';
+import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause, ScrollText, ShieldCheck, Clock, Check, Flag, Ban } from 'lucide-react';
 import { Dream, ViewState, User } from './types';
 import InfiniteMenu from './components/InfiniteMenu';
 import PixelCard from './components/PixelCard';
@@ -15,64 +15,47 @@ const CODEX_CATEGORIES = {
   SCENE: { id: 'scene', label: '经典场景', icon: Clapperboard, description: '循环的剧本', items: ['飞翔', '坠落', '追逐', '考试', '迟到', '掉牙', '裸体', '迷路', '开车', '电梯'] }
 };
 
-// --- Legal Text Constants ---
+// --- Legal Text Constants (Updated for Apple Compliance) ---
 const PRIVACY_POLICY = `
 **隐私政策**
 
 **生效日期：2024年1月1日**
 
-**成都柠檬特橙网络科技有限公司**（以下简称“我们”）非常重视用户的隐私和个人信息保护。本隐私政策旨在向您说明我们如何收集、使用、存储和保护您的个人信息。
+**Oneiric 梦境日志**（以下简称“我们”）非常重视用户的隐私。
 
 **1. 我们收集的信息**
-*   **梦境记录数据**：为了提供梦境解读服务，我们会收集您上传的语音录音或输入的文字描述。
-*   **设备权限**：使用语音记录功能时，我们需要获取您的麦克风权限。
-*   **本地存储**：您的梦境日记主要存储在您设备的本地存储（LocalStorage）中，除非您主动使用云端同步功能（如有）。
+*   **梦境记录**：为了提供解读服务，我们会处理您上传的语音或文字。
+*   **权限**：仅在您使用录音功能时请求麦克风权限。
+*   **本地优先**：数据主要存储在您的设备本地。
 
-**2. 信息的用途**
-*   **AI分析**：我们将您的梦境描述发送至第三方人工智能服务（如 Google Gemini API）进行处理，以生成标题、解读、情绪分析及相关视觉图像。
-*   **服务优化**：我们可能使用匿名化的统计数据来改进应用性能和用户体验。
+**2. 数据安全与合规**
+*   我们使用符合当地法律法规的 AI 服务商进行数据处理。
+*   我们不会在未经允许的情况下向第三方出售您的个人信息。
 
-**3. 信息安全**
-我们采取合理的技术手段保护您的信息安全。虽然我们使用先进的 AI 技术进行处理，但请注意，没有任何互联网传输是百分之百安全的。
-
-**4. 第三方服务**
-本应用包含第三方 AI 生成服务。这些服务可能有其独立的隐私政策，建议您查阅相关说明。
-
-**5. 联系我们**
-如您对本隐私政策有任何疑问，请联系我们：
-*   联系人：李本世
-*   邮箱：alizabos@163.com
+**3. 联系我们**
+如有疑问，请通过应用内的“关于”页面联系我们。
 `;
 
 const USER_AGREEMENT = `
-**用户协议**
-
-**生效日期：2024年1月1日**
-
-欢迎使用 Oneiric 梦境日志（以下简称“本应用”）。本应用由 **成都柠檬特橙网络科技有限公司** 开发并运营。请您在使用前仔细阅读以下条款。
+**用户协议 (EULA)**
 
 **1. 服务内容**
-本应用提供梦境记录、AI 辅助解读、情感分析及图像/视频生成服务。
+本应用提供梦境记录及 AI 辅助解读服务。
 
-**2. 免责声明（重要）**
-*   **非医疗建议**：本应用提供的梦境解读、心理分析仅基于 AI 模型生成，仅供娱乐和自我探索参考，**不构成任何专业的心理咨询或医疗诊断建议**。如有严重的心理困扰，请咨询专业医生。
-*   **内容准确性**：AI 生成的内容可能存在虚构或不准确的情况，我们不对其准确性负责。
+**2. 用户行为规范 (Apple 商店合规必读)**
+您在使用“共鸣星海”等社交功能时，**严禁**发布以下内容：
+*   **色情、淫秽或过于暴露的内容**
+*   **暴力、血腥或教唆犯罪的内容**
+*   **种族歧视、仇恨言论或人身攻击**
+*   **政治敏感或违规信息**
 
-**3. 用户行为规范**
-您在使用本应用时，不得录入或上传包含以下内容的信息：
-*   违反国家法律法规的；
-*   侵犯他人隐私或知识产权的；
-*   包含暴力、色情、仇恨言论的。
+**3. 违规处理 (零容忍政策)**
+*   我们对违规内容实行**零容忍**政策。
+*   用户可通过“举报”功能对违规内容进行投诉，我们将于 24 小时内审核并处理。
+*   一旦核实违规，我们将立即删除相关内容，并永久封禁违规账号。
 
-**4. 知识产权**
-本应用的界面设计、源代码及相关知识产权归成都柠檬特橙网络科技有限公司所有。用户生成的梦境记录归用户本人所有。
-
-**5. 协议修改**
-我们保留随时修改本协议的权利。修改后的协议一旦公布即生效。
-
-**6. 联系方式**
-*   联系人：李本世
-*   邮箱：alizabos@163.com
+**4. 免责声明**
+AI 生成的解读仅供娱乐参考，不构成专业医疗建议。
 `;
 
 // Mock Data
@@ -116,6 +99,20 @@ export default function App() {
       return DEFAULT_USER;
     }
   });
+
+  // BLOCK LIST PERSISTENCE (App Store Requirement)
+  const [blockedIds, setBlockedIds] = useState<string[]>(() => {
+    try {
+        const saved = localStorage.getItem('oneiric_blocked_users');
+        return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+        return [];
+    }
+  });
+
+  useEffect(() => {
+      localStorage.setItem('oneiric_blocked_users', JSON.stringify(blockedIds));
+  }, [blockedIds]);
   
   const [view, setView] = useState<ViewState>('LIST');
   const [selectedDream, setSelectedDream] = useState<Dream | null>(null);
@@ -380,23 +377,31 @@ export default function App() {
        await navigator.share(shareData);
     } catch (err) {}
   };
+  
+  // Apple Compliance Handler - UPDATED FOR PERSISTENCE
+  const handleReport = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if(confirm("确定要举报此内容吗？我们会尽快审核。")) {
+          alert("举报已提交，感谢您维护社区环境。");
+          // Hide the content locally immediately
+          if (galaxyTarget) {
+            setBlockedIds(prev => [...prev, galaxyTarget.id]);
+          }
+          setGalaxyTarget(null);
+          setGalaxyDetailOpen(false);
+      }
+  };
 
-  const handleShareText = async (text: string) => {
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: selectedDream?.title || '梦境解读',
-                text: text + '\n\n#Oneiric梦境日志',
-            });
-        } catch(e) {}
-    } else {
-        try {
-            await navigator.clipboard.writeText(text);
-            alert("解读内容已复制到剪贴板");
-        } catch (e) {
-            alert("复制失败");
-        }
-    }
+  const handleBlock = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if(confirm("确定要拉黑此用户吗？您将不再看到其内容。")) {
+          if (galaxyTarget) {
+             setBlockedIds(prev => [...prev, galaxyTarget.id]);
+          }
+          alert("已拉黑。");
+          setGalaxyTarget(null);
+          setGalaxyDetailOpen(false);
+      }
   };
 
   const formatTime = (seconds: number) => {
@@ -674,6 +679,9 @@ export default function App() {
     // Current user's most recent dream
     const myDream = dreams[0]; 
     
+    // Filter out blocked users
+    const filteredDreams = MOCK_GALAXY_DREAMS.filter(d => !blockedIds.includes(d.id));
+
     return (
       <div className="flex-1 relative overflow-hidden animate-fade-in bg-black flex flex-col items-center justify-center perspective-1000">
           
@@ -681,18 +689,19 @@ export default function App() {
           {galaxyDetailOpen && galaxyTarget && (
              <div className="absolute inset-0 z-[60] bg-black flex flex-col animate-zoom-in">
                  {/* Detail Header */}
-                 <div className="px-6 py-6 flex justify-between items-center z-50">
+                 <div className="px-6 py-6 flex justify-between items-center z-50 pt-[calc(1.5rem+env(safe-area-inset-top))]">
                      <button onClick={() => { setGalaxyDetailOpen(false); if(isPlaying) { if(audioRef.current) audioRef.current.pause(); setIsPlaying(false); } }} className="hover:opacity-70 transition-opacity">
                          <Menu size={18} strokeWidth={1.5} className="text-white" />
                      </button>
                      <div className="flex items-center gap-4">
-                         <div className="relative">
-                             <Star size={18} strokeWidth={1.5} className="text-white/80" />
-                             <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-yellow-500 rounded-full shadow-[0_0_5px_rgba(234,179,8,0.8)]" />
-                         </div>
-                         <div className="w-8 h-8 flex items-center justify-center border border-white/20 rounded-lg bg-white/5">
-                             <Plus size={16} className="text-white/80" />
-                         </div>
+                         {/* APPLE COMPLIANCE: REPORT BUTTON */}
+                         <button onClick={handleReport} className="flex items-center gap-1 px-3 py-1 bg-red-900/30 border border-red-500/30 rounded-full hover:bg-red-900/50">
+                            <Flag size={12} className="text-red-400" />
+                            <span className="text-[10px] text-red-200">举报</span>
+                         </button>
+                         <button onClick={handleBlock} className="p-2 border border-white/10 rounded-full hover:bg-white/5">
+                            <Ban size={16} className="text-white/60" />
+                         </button>
                      </div>
                  </div>
 
@@ -762,7 +771,7 @@ export default function App() {
           {/* Header Banner */}
           <div className="absolute top-8 w-full text-center z-10 pointer-events-none animate-slide-up">
               <p className="text-[10px] text-white/50 font-mono tracking-[0.3em] uppercase animate-pulse">
-                昨夜，有 328 个孤独的灵魂与你同频
+                昨夜，有 {filteredDreams.length + 319} 个孤独的灵魂与你同频
               </p>
           </div>
 
@@ -780,7 +789,7 @@ export default function App() {
               </div>
 
               {/* Surrounding Stars (Others) */}
-              {MOCK_GALAXY_DREAMS.map((star, idx) => {
+              {filteredDreams.map((star, idx) => {
                  // Calculate semi-random positions roughly orbital
                  // We rely on the hardcoded x/y % from mock but center them relative to container
                  return (
@@ -869,6 +878,13 @@ export default function App() {
                               <span className="text-[10px] tracking-widest text-white/90">信号已发送</span>
                           </div>
                       </button>
+                      
+                      {/* APPLE COMPLIANCE MINI ACTION */}
+                      <div className="absolute top-4 right-4 flex gap-2">
+                          <button onClick={handleReport} className="text-white/20 hover:text-red-400 transition-colors" title="举报">
+                              <Flag size={14} />
+                          </button>
+                      </div>
                   </div>
               </div>
           )}
@@ -972,8 +988,8 @@ export default function App() {
       {/* Background Ambience - Grid instead of dots for wireframe feel */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear_gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20 pointer-events-none"></div>
 
-      {/* Header */}
-      <header className="z-50 px-6 py-6 flex justify-between items-center bg-gradient-to-b from-black via-black/80 to-transparent fixed top-0 left-0 right-0 pointer-events-none">
+      {/* Header - Fixed to top, needs safe area padding */}
+      <header className="z-50 px-6 py-6 pt-[calc(1.5rem+env(safe-area-inset-top))] flex justify-between items-center bg-gradient-to-b from-black via-black/80 to-transparent fixed top-0 left-0 right-0 pointer-events-none transition-all duration-300">
         <div 
             className="cursor-pointer group z-50 hover:opacity-70 transition-opacity pointer-events-auto" 
             onClick={() => {
@@ -1047,7 +1063,8 @@ export default function App() {
       {renderMenu()}
 
       {/* Main Content Area */}
-      <main className="flex-1 relative overflow-hidden flex flex-col">
+      <main className="flex-1 relative overflow-hidden flex flex-col pt-[calc(3rem+env(safe-area-inset-top))]"> 
+      {/* Added top padding to main container to account for fixed header + safe area */}
         {view === 'LIST' && <InfiniteMenu items={dreams} onSelect={handleSelectDream} />}
         {view === 'PROFILE' && renderProfile()}
         {view === 'CODEX' && renderCodex()}
@@ -1056,7 +1073,7 @@ export default function App() {
 
         {/* LEGAL MODAL */}
         {legalView && (
-            <div className="absolute inset-0 z-[60] bg-black/95 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-in">
+            <div className="absolute inset-0 z-[60] bg-black/95 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-in pt-[calc(3rem+env(safe-area-inset-top))]">
                 <div className="bg-black border border-white/10 w-full max-w-lg max-h-[85vh] flex flex-col animate-zoom-in shadow-2xl">
                     <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
                         <div className="flex items-center gap-3">

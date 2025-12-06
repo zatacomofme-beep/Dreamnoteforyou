@@ -2,8 +2,18 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Oneiric - 梦境日志</title>
+    
+    <!-- iOS Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Oneiric">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- iOS Icons (Placeholders - strictly required for PWA/WebClip experience) -->
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1614730341194-75c60740a2d3?w=180&h=180&fit=crop">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -61,6 +71,8 @@
         background-color: #050505;
         color: #ffffff;
         overflow: hidden; /* App handles scrolling */
+        -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
+        /* Padding handled in App.tsx to support fixed headers better */
       }
       /* Custom Scrollbar hide */
       .no-scrollbar::-webkit-scrollbar {
@@ -91,7 +103,6 @@
     "react": "https://aistudiocdn.com/react@^19.2.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
   }
 }
