@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause, ScrollText, ShieldCheck, Clock } from 'lucide-react';
+import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause, ScrollText, ShieldCheck, Clock, Check } from 'lucide-react';
 import { Dream, ViewState, User } from './types';
 import InfiniteMenu from './components/InfiniteMenu';
 import PixelCard from './components/PixelCard';
@@ -419,7 +419,7 @@ export default function App() {
           setIsResonating(false);
           setResonanceSent(true);
           
-          // Phase 2: Success Message Display (2s)
+          // Phase 2: Success Message Display (1.5s)
           setTimeout(() => {
              // Phase 3: Start Exit Animation
              setIsClosingGalaxyModal(true);
@@ -430,7 +430,7 @@ export default function App() {
                 setResonanceSent(false);
                 setIsClosingGalaxyModal(false);
              }, 500);
-          }, 2000);
+          }, 1500);
       }, 1500);
   };
 
@@ -814,7 +814,7 @@ export default function App() {
                 onClick={() => !isResonating && !resonanceSent && setGalaxyTarget(null)}
               >
                   <div 
-                      className={`relative w-80 backdrop-blur-xl bg-[#0a0a0a]/90 border border-white/10 rounded-2xl p-8 flex flex-col items-center text-center space-y-8 shadow-2xl transition-all duration-700 overflow-hidden ${resonanceSent ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}
+                      className={`relative w-80 backdrop-blur-xl bg-[#0a0a0a]/90 border border-white/10 rounded-2xl p-8 flex flex-col items-center text-center space-y-8 shadow-2xl transition-all duration-700 overflow-hidden ${isClosingGalaxyModal ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}
                       onClick={e => e.stopPropagation()}
                   >
                       {/* Privacy Blur Layer / Fingerprint Button */}
@@ -848,35 +848,28 @@ export default function App() {
 
                       <button 
                           onClick={handleResonance}
-                          disabled={isResonating}
-                          className="w-full py-4 mt-2 group relative overflow-hidden text-center flex items-center justify-center"
+                          disabled={isResonating || resonanceSent}
+                          className={`w-full py-4 mt-2 group relative overflow-hidden text-center flex items-center justify-center border border-white/10 transition-all duration-300 ${resonanceSent ? 'bg-white/10 border-white/30' : 'hover:bg-white/5'}`}
                       >
-                          <div className={`flex items-center justify-center gap-3 transition-all duration-300 ${isResonating ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}>
+                          {/* Normal State */}
+                          <div className={`flex items-center justify-center gap-3 transition-all duration-300 ${isResonating || resonanceSent ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
                               <Radio size={16} className="text-white/80" />
                               <span className="text-[11px] tracking-[0.3em] uppercase text-white/80 font-medium">发送共鸣信号</span>
                           </div>
                           
-                          {/* Particle Explosion Effect */}
-                          {isResonating && (
-                               <div className="absolute inset-0 flex items-center justify-center">
-                                   <div className="w-2 h-2 bg-white rounded-full animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite]" />
-                                   <span className="text-[9px] tracking-widest text-white animate-pulse absolute mt-8">发送中...</span>
-                               </div>
-                          )}
+                          {/* Loading State */}
+                          <div className={`absolute inset-0 flex items-center justify-center gap-2 transition-all duration-300 ${isResonating ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+                              <Loader2 size={14} className="animate-spin text-white/80" />
+                              <span className="text-[10px] tracking-widest text-white/80">发送中...</span>
+                          </div>
+
+                          {/* Success State */}
+                          <div className={`absolute inset-0 flex items-center justify-center gap-2 transition-all duration-300 ${resonanceSent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                              <Check size={14} className="text-green-400" />
+                              <span className="text-[10px] tracking-widest text-white/90">信号已发送</span>
+                          </div>
                       </button>
                   </div>
-                  
-                  {resonanceSent && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                           <div className="text-center space-y-6 animate-fade-in">
-                               {/* Elegant thin line */}
-                               <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-white/50 to-transparent mx-auto" />
-                               <p className="text-xs text-white/90 font-light tracking-[0.3em] uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
-                                   信号已发送。愿你好梦。
-                               </p>
-                           </div>
-                      </div>
-                  )}
               </div>
           )}
       </div>
