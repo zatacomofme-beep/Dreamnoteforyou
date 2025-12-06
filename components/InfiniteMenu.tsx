@@ -61,13 +61,13 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
 
     if (distance < maxDist) {
       const ratio = distance / maxDist;
-      scale = 1 - (ratio * 0.1);
+      scale = 1 - (ratio * 0.15); // Slightly more scaling difference to emphasize depth
       opacity = 1 - (ratio * 0.5);
-      blur = ratio * 2;
+      blur = ratio * 4; // More blur for depth
     } else {
-      scale = 0.9;
+      scale = 0.85;
       opacity = 0.3;
-      blur = 2;
+      blur = 4;
     }
 
     return {
@@ -90,11 +90,11 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
         className="w-full h-full overflow-y-scroll no-scrollbar py-[50vh] scroll-smooth"
         style={{ height: CONTAINER_HEIGHT }}
       >
-        <div className="flex flex-col items-center space-y-8 px-4 w-full">
+        <div className="flex flex-col items-center w-full">
           {items.map((dream, index) => (
             <div 
               key={dream.id}
-              className="w-[70%] max-w-[280px] transition-all duration-300 ease-out"
+              className="w-[75%] max-w-[300px] transition-all duration-300 ease-out my-[-30px]"
               style={{
                 height: ITEM_HEIGHT,
                 ...getStyle(index)
@@ -103,7 +103,7 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
               <PixelCard 
                 color={dream.color}
                 onClick={() => onSelect(dream)}
-                className="h-full w-full overflow-hidden relative group border-none bg-zinc-900"
+                className="h-full w-full overflow-hidden relative group border border-white/10 bg-zinc-900 shadow-2xl rounded-2xl"
               >
                 {/* Background Video/Image */}
                 {dream.videoUrl ? (
@@ -129,17 +129,17 @@ const InfiniteMenu: React.FC<InfiniteMenuProps> = ({ items, onSelect }) => {
                 
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-                <div className="relative z-10 h-full p-5 flex flex-col justify-end pointer-events-none">
-                  <h3 className="text-lg font-light text-white truncate tracking-wider">{dream.title}</h3>
+                <div className="relative z-10 h-full p-6 flex flex-col justify-end pointer-events-none">
+                  <h3 className="text-xl font-medium text-white truncate tracking-wide drop-shadow-lg">{dream.title}</h3>
                   
-                  <div className="flex items-center space-x-2 text-[10px] text-white/60 mt-2 font-mono uppercase">
+                  <div className="flex items-center space-x-2 text-[10px] text-white/70 mt-2 font-mono uppercase">
                     <Clock size={10} />
                     <span>{new Date(dream.date).toLocaleDateString('zh-CN')}</span>
                   </div>
                   
-                  <div className="flex flex-wrap gap-1 mt-3">
+                  <div className="flex flex-wrap gap-1.5 mt-3">
                     {dream.keyPoints && dream.keyPoints.slice(0, 2).map(pt => (
-                        <span key={pt} className="text-[9px] px-2 py-px bg-white/10 backdrop-blur-md border border-white/5 truncate max-w-[80px] text-white/80">
+                        <span key={pt} className="text-[9px] px-2 py-1 bg-white/10 backdrop-blur-md border border-white/5 truncate max-w-[100px] text-white/90 rounded-md">
                             {pt}
                         </span>
                     ))}

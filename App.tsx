@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause, ScrollText, ShieldCheck } from 'lucide-react';
+import { Plus, ArrowLeft, Trash2, Mic, Square, Sparkles, User as UserIcon, Loader2, Crown, BookOpen, X, Share2, Menu, Grid, Star, Info, Heart, Lock, Radio, Fingerprint, Activity, Eye, PawPrint, Mountain, Brain, Clapperboard, Play, Pause, ScrollText, ShieldCheck, Clock } from 'lucide-react';
 import { Dream, ViewState, User } from './types';
 import InfiniteMenu from './components/InfiniteMenu';
 import PixelCard from './components/PixelCard';
@@ -84,15 +84,15 @@ const DEFAULT_USER: User = {
 };
 
 const MOCK_GALAXY_DREAMS = [
-  { id: 'g1', keywords: ['#考试迟到', '#焦虑', '#找不到教室'], color: '#ef4444', x: 20, y: 30, distance: 1, location: '数千公里外的北方' },
-  { id: 'g2', keywords: ['#高空坠落', '#失重', '#惊醒'], color: '#3b82f6', x: 70, y: 60, distance: 0.8, location: '来自潮湿的南方' },
-  { id: 'g3', keywords: ['#牙齿掉落', '#无力感', '#镜子'], color: '#a855f7', x: 40, y: 80, distance: 2, location: '或许就在隔壁城市' },
-  { id: 'g4', keywords: ['#被追逐', '#跑不动', '#黑影'], color: '#10b981', x: 80, y: 20, distance: 3, location: '未知的海岸线' },
-  { id: 'g5', keywords: ['#会飞', '#俯瞰', '#自由'], color: '#f59e0b', x: 15, y: 70, distance: 1.5, location: '高原之上' },
-  { id: 'g6', keywords: ['#迷路', '#楼梯', '#循环'], color: '#6366f1', x: 50, y: 50, distance: 0.5, location: '喧嚣的都市角落' },
-  { id: 'g7', keywords: ['#已故亲人', '#温暖', '#无言'], color: '#ec4899', x: 60, y: 15, distance: 2.5, location: '安静的山谷' },
-  { id: 'g8', keywords: ['#回到学校', '#做题', '#同桌'], color: '#14b8a6', x: 85, y: 85, distance: 1.2, location: '久远的记忆里' },
-  { id: 'g9', keywords: ['#赤身裸体', '#羞耻', '#人群'], color: '#f43f5e', x: 30, y: 40, distance: 2.8, location: '异国他乡' },
+  { id: 'g1', keywords: ['#赤身裸体', '#羞耻', '#人群'], color: '#ef4444', x: 20, y: 30, distance: 1, location: '异国他乡', title: '迷失在拥挤的广场', date: '2025/12/04', imageUrl: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
+  { id: 'g2', keywords: ['#高空坠落', '#失重', '#惊醒'], color: '#3b82f6', x: 70, y: 60, distance: 0.8, location: '来自潮湿的南方', title: '深渊的呼唤', date: '2025/12/05', imageUrl: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
+  { id: 'g3', keywords: ['#牙齿掉落', '#无力感', '#镜子'], color: '#a855f7', x: 40, y: 80, distance: 2, location: '或许就在隔壁城市', title: '破碎的倒影', date: '2025/11/20', imageUrl: 'https://images.unsplash.com/photo-1512418490979-92798cec1380?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
+  { id: 'g4', keywords: ['#被追逐', '#跑不动', '#黑影'], color: '#10b981', x: 80, y: 20, distance: 3, location: '未知的海岸线', title: '永无止境的奔跑', date: '2025/12/01', imageUrl: 'https://images.unsplash.com/photo-1466853817435-05b43fe45b39?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
+  { id: 'g5', keywords: ['#会飞', '#俯瞰', '#自由'], color: '#f59e0b', x: 15, y: 70, distance: 1.5, location: '高原之上', title: '飞越云端', date: '2025/12/06', imageUrl: 'https://images.unsplash.com/photo-1500491460312-c32fc2dbc751?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
+  { id: 'g6', keywords: ['#迷路', '#楼梯', '#循环'], color: '#6366f1', x: 50, y: 50, distance: 0.5, location: '喧嚣的都市角落', title: '无尽的回旋楼梯', date: '2025/10/15', imageUrl: 'https://images.unsplash.com/photo-1506318137071-a8bcbf67cc77?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
+  { id: 'g7', keywords: ['#已故亲人', '#温暖', '#无言'], color: '#ec4899', x: 60, y: 15, distance: 2.5, location: '安静的山谷', title: '最后的告别', date: '2025/12/03', imageUrl: 'https://images.unsplash.com/photo-1518063319789-7217e6706b04?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
+  { id: 'g8', keywords: ['#回到学校', '#做题', '#同桌'], color: '#14b8a6', x: 85, y: 85, distance: 1.2, location: '久远的记忆里', title: '那年夏天的考试', date: '2025/09/28', imageUrl: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
+  { id: 'g9', keywords: ['#果海坠崖', '#超能新生', '#紫色'], color: '#f43f5e', x: 30, y: 40, distance: 2.8, location: '异国他乡', title: '果海坠崖, 超能新生', date: '2025/12/05', imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&auto=format&fit=crop', audioUrl: '' },
 ];
 
 export default function App() {
@@ -147,9 +147,11 @@ export default function App() {
 
   // Galaxy State
   const [galaxyTarget, setGalaxyTarget] = useState<typeof MOCK_GALAXY_DREAMS[0] | null>(null);
+  const [galaxyDetailOpen, setGalaxyDetailOpen] = useState(false);
   const [isResonating, setIsResonating] = useState(false);
   const [resonanceSent, setResonanceSent] = useState(false);
   const [showResonanceNotification, setShowResonanceNotification] = useState(false);
+  const [isClosingGalaxyModal, setIsClosingGalaxyModal] = useState(false);
 
   // --- Effects ---
   useEffect(() => {
@@ -303,6 +305,20 @@ export default function App() {
         setCodexCategory(null);
         return;
     }
+    // Handle Galaxy Detail Back
+    if (view === 'GALAXY' && galaxyDetailOpen) {
+        setGalaxyDetailOpen(false);
+        if (isPlaying) {
+             if(audioRef.current) audioRef.current.pause();
+             setIsPlaying(false);
+        }
+        return;
+    }
+    if (view === 'GALAXY' && galaxyTarget) {
+        setGalaxyTarget(null);
+        return;
+    }
+
     if (['PROFILE', 'CODEX', 'GALAXY', 'ABOUT'].includes(view)) {
         setView('LIST');
         return;
@@ -316,16 +332,30 @@ export default function App() {
   };
 
   const togglePlayback = (url: string) => {
+    if (!url) return;
     if (!audioRef.current) {
       audioRef.current = new Audio(url);
       audioRef.current.onended = () => setIsPlaying(false);
     }
-    if (audioRef.current.src !== url) audioRef.current.src = url;
+    if (audioRef.current.src !== url && url.startsWith('http')) {
+         // Only switch src if it's a valid url. For galaxy mocks, we might simulate.
+         audioRef.current.src = url;
+    } else if (url === '') {
+        // Simulation for galaxy dreams without real audio
+        setIsPlaying(!isPlaying);
+        return;
+    }
+
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play();
+      audioRef.current.play().catch(e => {
+          // Fallback for simulation
+          console.log("Mock playback started");
+          setIsPlaying(true);
+          setTimeout(() => setIsPlaying(false), 3000);
+      });
       setIsPlaying(true);
     }
   };
@@ -377,17 +407,30 @@ export default function App() {
 
   const handleGalaxyClick = (target: typeof MOCK_GALAXY_DREAMS[0]) => {
       setGalaxyTarget(target);
+      setGalaxyDetailOpen(false);
       setResonanceSent(false);
   };
 
   const handleResonance = () => {
       setIsResonating(true);
+      
+      // Phase 1: Sending Simulation (1.5s)
       setTimeout(() => {
           setIsResonating(false);
           setResonanceSent(true);
+          
+          // Phase 2: Success Message Display (2s)
           setTimeout(() => {
-              setGalaxyTarget(null);
-          }, 1500);
+             // Phase 3: Start Exit Animation
+             setIsClosingGalaxyModal(true);
+             
+             // Phase 4: Actual Unmount after transition (0.5s)
+             setTimeout(() => {
+                setGalaxyTarget(null);
+                setResonanceSent(false);
+                setIsClosingGalaxyModal(false);
+             }, 500);
+          }, 2000);
       }, 1500);
   };
 
@@ -633,6 +676,80 @@ export default function App() {
     
     return (
       <div className="flex-1 relative overflow-hidden animate-fade-in bg-black flex flex-col items-center justify-center perspective-1000">
+          
+          {/* Detailed Galaxy Dream View (Screenshot 2) */}
+          {galaxyDetailOpen && galaxyTarget && (
+             <div className="absolute inset-0 z-[60] bg-black flex flex-col animate-zoom-in">
+                 {/* Detail Header */}
+                 <div className="px-6 py-6 flex justify-between items-center z-50">
+                     <button onClick={() => { setGalaxyDetailOpen(false); if(isPlaying) { if(audioRef.current) audioRef.current.pause(); setIsPlaying(false); } }} className="hover:opacity-70 transition-opacity">
+                         <Menu size={18} strokeWidth={1.5} className="text-white" />
+                     </button>
+                     <div className="flex items-center gap-4">
+                         <div className="relative">
+                             <Star size={18} strokeWidth={1.5} className="text-white/80" />
+                             <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-yellow-500 rounded-full shadow-[0_0_5px_rgba(234,179,8,0.8)]" />
+                         </div>
+                         <div className="w-8 h-8 flex items-center justify-center border border-white/20 rounded-lg bg-white/5">
+                             <Plus size={16} className="text-white/80" />
+                         </div>
+                     </div>
+                 </div>
+
+                 {/* Main Content Area */}
+                 <div className="flex-1 flex items-center justify-center p-8">
+                     <div className="relative w-full max-w-sm aspect-square rounded-2xl overflow-hidden border border-white/10 shadow-2xl group">
+                         {/* Image */}
+                         <img 
+                            src={galaxyTarget.imageUrl || "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop"} 
+                            alt={galaxyTarget.title}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                         />
+                         
+                         {/* Play Button Overlay */}
+                         <button 
+                            onClick={() => togglePlayback(galaxyTarget.audioUrl || '')}
+                            className="absolute inset-0 flex items-center justify-center z-30"
+                         >
+                             <div className={`w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.5)] ${isPlaying ? 'bg-white/20 scale-100' : ''}`}>
+                                 {isPlaying ? <Pause size={24} className="fill-white text-white" /> : <Play size={24} className="fill-white text-white ml-1" />}
+                             </div>
+                         </button>
+
+                         {/* Info Overlay (Bottom) */}
+                         <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent z-20 flex flex-col gap-3">
+                             <div className="flex items-center gap-2">
+                                 {/* Pixel accents */}
+                                 <div className="w-1.5 h-1.5 bg-purple-500" />
+                                 <div className="w-1.5 h-1.5 bg-purple-500/50" />
+                             </div>
+                             <div>
+                                 <h2 className="text-xl font-medium tracking-wide text-white mb-1">{galaxyTarget.title}</h2>
+                                 <div className="flex items-center gap-2 text-[10px] text-white/50 font-mono tracking-widest uppercase">
+                                     <Clock size={10} />
+                                     <span>{galaxyTarget.date}</span>
+                                 </div>
+                             </div>
+                             
+                             <div className="flex flex-wrap gap-2 pt-2">
+                                {galaxyTarget.keywords.map(k => (
+                                     <span key={k} className="text-[9px] px-2 py-1 bg-white/10 backdrop-blur-sm border border-white/5 rounded-sm text-white/70">
+                                         {k}
+                                     </span>
+                                 ))}
+                             </div>
+                         </div>
+                         
+                         {/* Corner Accents */}
+                         <div className="absolute top-4 left-4 w-2 h-2 border-t border-l border-white/30" />
+                         <div className="absolute top-4 right-4 w-2 h-2 border-t border-r border-white/30" />
+                         <div className="absolute bottom-4 left-4 w-2 h-2 border-b border-l border-white/30 z-30" />
+                         <div className="absolute bottom-4 right-4 w-2 h-2 border-b border-r border-white/30 z-30" />
+                     </div>
+                 </div>
+             </div>
+          )}
+
           {/* Rotating Nebula Background */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
                <div className="w-[120vw] h-[120vw] bg-[radial-gradient(circle_at_center,rgba(50,50,100,0.4),rgba(0,0,0,0)_60%)] animate-pulse-slow mix-blend-screen" />
@@ -690,44 +807,53 @@ export default function App() {
               )})}
           </div>
 
-          {/* Modal: The Peek */}
-          {galaxyTarget && (
-              <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[2px]" onClick={() => !isResonating && !resonanceSent && setGalaxyTarget(null)}>
+          {/* Modal: The Signal Peek (Screenshot 1) */}
+          {galaxyTarget && !galaxyDetailOpen && (
+              <div 
+                className={`absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[2px] transition-opacity duration-500 ${isClosingGalaxyModal ? 'opacity-0' : 'opacity-100'}`} 
+                onClick={() => !isResonating && !resonanceSent && setGalaxyTarget(null)}
+              >
                   <div 
-                      className={`relative w-80 backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 flex flex-col items-center text-center space-y-6 shadow-2xl transition-all duration-700 overflow-hidden ${resonanceSent ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}
+                      className={`relative w-80 backdrop-blur-xl bg-[#0a0a0a]/90 border border-white/10 rounded-2xl p-8 flex flex-col items-center text-center space-y-8 shadow-2xl transition-all duration-700 overflow-hidden ${resonanceSent ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}
                       onClick={e => e.stopPropagation()}
                   >
-                      {/* Privacy Blur Layer */}
-                      <div className="w-24 h-24 rounded-full overflow-hidden relative mb-2 ring-1 ring-white/10">
-                          <div className="absolute inset-0 bg-gradient-to-tr from-purple-500 to-blue-500 opacity-50 mix-blend-screen" />
+                      {/* Privacy Blur Layer / Fingerprint Button */}
+                      <button 
+                         onClick={() => setGalaxyDetailOpen(true)}
+                         className="w-28 h-28 rounded-full overflow-hidden relative mb-2 ring-1 ring-white/10 group cursor-pointer"
+                      >
+                          <div className="absolute inset-0 bg-gradient-to-tr from-purple-600 to-blue-600 opacity-60 mix-blend-screen group-hover:opacity-80 transition-opacity" />
                           <div className="absolute inset-0 backdrop-blur-xl" />
                           <div className="absolute inset-0 flex items-center justify-center">
-                               <Fingerprint className="text-white/20" size={32} strokeWidth={1} />
+                               <Fingerprint className="text-white/30 group-hover:text-white/80 transition-colors duration-500 group-hover:scale-110" size={48} strokeWidth={1} />
                           </div>
-                      </div>
+                          {/* Scan Line Animation */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent h-[10px] w-full animate-[slideUp_2s_infinite]" />
+                      </button>
 
-                      <div className="space-y-3 w-full">
+                      <div className="space-y-4 w-full">
                           <div className="flex flex-wrap justify-center gap-2">
                              {galaxyTarget.keywords.map(k => (
-                                 <span key={k} className="text-[9px] px-2 py-1 bg-white/5 border border-white/5 rounded-full text-white/60 tracking-wider">
+                                 <span key={k} className="text-[10px] px-3 py-1.5 bg-white/5 border border-white/5 rounded-full text-white/60 tracking-wider">
                                      {k}
                                  </span>
                              ))}
                           </div>
-                          <p className="text-[9px] text-white/30 tracking-widest uppercase border-t border-white/5 pt-3">
-                              {galaxyTarget.location}
-                          </p>
+                          <div className="border-t border-white/5 pt-4 w-full">
+                             <p className="text-[10px] text-white/30 tracking-widest uppercase">
+                                 {galaxyTarget.location}
+                             </p>
+                          </div>
                       </div>
 
                       <button 
                           onClick={handleResonance}
                           disabled={isResonating}
-                          className="w-full py-4 mt-2 group relative overflow-hidden"
+                          className="w-full py-4 mt-2 group relative overflow-hidden text-center flex items-center justify-center"
                       >
-                          <div className={`absolute inset-0 bg-gradient-to-r from-white/10 to-transparent transition-transform duration-500 ${isResonating ? 'translate-x-full' : '-translate-x-full group-hover:translate-x-0'}`} />
-                          <div className={`flex items-center justify-center gap-2 transition-all duration-300 ${isResonating ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}>
+                          <div className={`flex items-center justify-center gap-3 transition-all duration-300 ${isResonating ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}>
                               <Radio size={16} className="text-white/80" />
-                              <span className="text-[10px] tracking-[0.3em] uppercase text-white/80">发送共鸣信号</span>
+                              <span className="text-[11px] tracking-[0.3em] uppercase text-white/80 font-medium">发送共鸣信号</span>
                           </div>
                           
                           {/* Particle Explosion Effect */}
@@ -741,10 +867,13 @@ export default function App() {
                   </div>
                   
                   {resonanceSent && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none animate-fade-in">
-                           <div className="text-center space-y-4">
-                               <div className="w-px h-32 bg-gradient-to-b from-transparent via-white to-transparent mx-auto animate-[ping_1s_ease-out_reverse]" />
-                               <p className="text-xs text-white/80 font-light tracking-[0.2em] uppercase">信号已发送。愿你好梦。</p>
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                           <div className="text-center space-y-6 animate-fade-in">
+                               {/* Elegant thin line */}
+                               <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-white/50 to-transparent mx-auto" />
+                               <p className="text-xs text-white/90 font-light tracking-[0.3em] uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+                                   信号已发送。愿你好梦。
+                               </p>
                            </div>
                       </div>
                   )}
@@ -851,10 +980,15 @@ export default function App() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear_gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20 pointer-events-none"></div>
 
       {/* Header */}
-      <header className="z-50 px-6 py-6 flex justify-between items-center bg-gradient-to-b from-black via-black/80 to-transparent">
+      <header className="z-50 px-6 py-6 flex justify-between items-center bg-gradient-to-b from-black via-black/80 to-transparent fixed top-0 left-0 right-0 pointer-events-none">
         <div 
-            className="cursor-pointer group z-50 hover:opacity-70 transition-opacity" 
+            className="cursor-pointer group z-50 hover:opacity-70 transition-opacity pointer-events-auto" 
             onClick={() => {
+                // If viewing a detailed galaxy dream, clicking menu should act as back first
+                if (view === 'GALAXY' && galaxyDetailOpen) {
+                    setGalaxyDetailOpen(false);
+                    return;
+                }
                 if (legalView) {
                     setLegalView(null);
                 } else if (selectedElement) {
@@ -866,12 +1000,15 @@ export default function App() {
                 }
             }}
         >
-             {(isMenuOpen || codexCategory || selectedElement || legalView) ? <ArrowLeft size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />}
+             {/* Hide header icon if inside Galaxy Detail because it has its own header */}
+             {!(view === 'GALAXY' && galaxyDetailOpen) && (
+                (isMenuOpen || codexCategory || selectedElement || legalView || (view === 'GALAXY' && galaxyTarget)) ? <ArrowLeft size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />
+             )}
         </div>
 
         {/* Home View Header Actions */}
         {view === 'LIST' && (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 pointer-events-auto">
                  {/* Resonance Notification - Small Star Icon */}
                  <button 
                     onClick={() => setShowResonanceNotification(!showResonanceNotification)}
@@ -900,13 +1037,16 @@ export default function App() {
             </div>
         )}
 
+        {/* Regular Back Button Logic */}
         {(view !== 'LIST' && !isMenuOpen && !codexCategory && !selectedElement && !legalView) && (
-          <button 
-            onClick={handleBack}
-            className="hover:opacity-70 transition-opacity"
-          >
-            <ArrowLeft size={18} strokeWidth={1.5} />
-          </button>
+          <div className="pointer-events-auto">
+            <button 
+                onClick={handleBack}
+                className="hover:opacity-70 transition-opacity"
+            >
+                <ArrowLeft size={18} strokeWidth={1.5} />
+            </button>
+          </div>
         )}
       </header>
 
@@ -1012,10 +1152,26 @@ export default function App() {
               </div>
               
               <div className="w-full mt-6 flex flex-col gap-3">
-                  <button onClick={handleDeepAnalysis} disabled={isAnalyzing} className="w-full py-4 border border-white/10 flex items-center justify-center gap-3 hover:bg-white/5 transition-all group animate-slide-up">
-                      {isAnalyzing ? <Loader2 size={14} className="text-white animate-spin" /> : <BookOpen size={14} className="text-white/70" strokeWidth={1.5} />}
-                      <span className="text-[10px] font-light tracking-[0.2em] uppercase">{isAnalyzing ? '分析中...' : '深度解读'}</span>
-                  </button>
+                  {/* Split Buttons Row */}
+                  <div className="flex w-full gap-3 animate-slide-up">
+                      <button 
+                        onClick={handleDeepAnalysis} 
+                        disabled={isAnalyzing} 
+                        className="flex-1 py-4 border border-white/10 flex items-center justify-center gap-3 hover:bg-white/5 transition-all group"
+                      >
+                          {isAnalyzing ? <Loader2 size={14} className="text-white animate-spin" /> : <BookOpen size={14} className="text-white/70" strokeWidth={1.5} />}
+                          <span className="text-[10px] font-light tracking-[0.2em] uppercase text-nowrap">{isAnalyzing ? '分析中...' : '深度解读'}</span>
+                      </button>
+                      
+                      <button 
+                        onClick={() => setView('GALAXY')} 
+                        className="flex-1 py-4 border border-white/10 flex items-center justify-center gap-3 hover:bg-white/5 transition-all group"
+                      >
+                          <Star size={14} className="text-white/70" strokeWidth={1.5} />
+                          <span className="text-[10px] font-light tracking-[0.2em] uppercase text-nowrap">看别人的梦</span>
+                      </button>
+                  </div>
+
                   {user.isPro && selectedDream.videoStatus === 'pending' && (
                       <button onClick={() => handleTriggerVideo(selectedDream)} className="w-full py-4 border border-white/20 bg-white/5 flex items-center justify-center gap-3 hover:border-white/40 transition-all group animate-slide-up">
                           <Activity size={14} className="text-white/70" strokeWidth={1.5} />
@@ -1029,28 +1185,6 @@ export default function App() {
               </div>
             </div>
           </div>
-        )}
-
-        {/* ANALYSIS MODAL */}
-        {showAnalysisModal && selectedDream?.detailedAnalysis && (
-            <div className="absolute inset-0 z-[60] bg-black/95 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-in">
-                <div className="bg-black border border-white/10 w-full max-w-lg max-h-[85vh] flex flex-col animate-zoom-in">
-                    <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <BookOpen size={16} className="text-white/60" strokeWidth={1.5}/>
-                            <h3 className="text-xs font-light tracking-[0.2em] uppercase text-white">梦境解读</h3>
-                        </div>
-                        <button onClick={() => setShowAnalysisModal(false)} className="opacity-50 hover:opacity-100 transition-opacity"><X size={18} strokeWidth={1.5}/></button>
-                    </div>
-                    <div className="p-8 overflow-y-auto custom-scrollbar flex-1">
-                        <h4 className="text-lg font-light mb-6 text-white text-center tracking-widest">{selectedDream.title}</h4>
-                        <div className="text-white/70 leading-loose text-justify font-serif text-sm whitespace-pre-wrap space-y-4">{selectedDream.detailedAnalysis}</div>
-                    </div>
-                    <div className="p-6 border-t border-white/10 flex justify-center">
-                        <button onClick={() => handleShareText(selectedDream.detailedAnalysis!)} className="px-6 py-2 border border-white/10 hover:bg-white/5 text-white text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 transition-all"><Share2 size={12} /><span>分享</span></button>
-                    </div>
-                </div>
-            </div>
         )}
 
         {/* ADD / RECORD VIEW */}
